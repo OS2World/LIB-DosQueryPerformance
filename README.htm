@@ -1,0 +1,301 @@
+<!doctype html public "-//W3C//DTD HTML 3.2//EN">
+
+<html>
+
+ <head>
+  <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+  <meta name="language" content="en">
+  <meta name="author" content="January June / Yotogi-Hime / Beliefia Productions">
+  <meta name="date" content="2001-05-25T05:40:50+09:00">
+  <link rev="made" href="mailto:jjsuwa@sys3175.com">
+  <title>DosQueryPerformance() dynalink library Reference</title>
+ </head>
+
+ <body>
+
+  <h1>DosQueryPerformance() dynalink library, public release 1.0.0</h1>
+  <strong>Copyright 2001 January June / Yotogi-Hime / Beliefia Productions.</strong><br>
+  <hr>
+
+  <hr>
+
+  <a name="0"></a>
+  <h1>0. Table of Contents</h1>
+  <ul>
+   <li>0. <a href="#0">Table of Contents</a></li>
+   <li>1. <a href="#1">Welcome</a>
+       <ul>
+        <li>1.1. <a href="#1.1">Copyright and Disclaimer</a></li>
+        <li>1.2. <a href="#1.2">System Requirements</a></li>
+        <li>1.3. <a href="#1.3">Contact Author</a></li>
+        <li>1.4. <a href="#1.4">Revision History</a></li>
+       </ul></li>
+   <li>2. <a href="#2">Reference</a>
+       <ul>
+        <li>2.1. <a href="#2.1">PERFDLL.DLL, C/C++ API</a>
+            <ul>
+             <li>2.1.1. <a href="#2.1.1"><tt>DosQueryPerformance()</tt></a></li>
+            </ul></li>
+        <li>2.2. <a href="#2.2">RXPERFDL.DLL, REXX External Function Interface</a>
+            <ul>
+             <li>2.2.1. <a href="#2.2.1"><tt>RxQpLoadFuncs</tt></a></li>
+             <li>2.2.2. <a href="#2.2.2"><tt>RxQpDropFuncs</tt></a></li>
+             <li>2.2.3. <a href="#2.2.3"><tt>RxQueryPerformance</tt></a></li>
+            </ul></li>
+       </ul></li>
+  </ul>
+  <hr>
+
+  <hr>
+
+  <a name="1"></a>
+  <h1>1. Welcome</h1>
+  This software is a dynalink library that queries performance activity ratios (busy, idle and interrupt one) of overall system and each CPUs on 32bit OS/2 process.<br>
+  This function is derived from <tt>DosPerfSysCall()</tt> API, but it is slightly complicated to issue this API directly:
+  <ul>
+   <li>Not all of 32bit OS/2 have <tt>DosPerfSysCall()</tt>.</li>
+   <li>Not all of 80386-compatible CPUs have <tt>RDTSC</tt> instruction.</li>
+   <li>It is necessary to determine # of CPUs to calculate overall system acativity, in SMP environments.</li>
+   <li>More calculations are required to obtain activity ratios, because queried results are raw snapshot of 64bit-wide <tt>RDTSC</tt> counters.</li>
+  </ul>
+  This DLL internally does such complex handlings of all above, thus you can simply call one: <tt>DosQueryPerformance()</tt> :)<br>
+  <br>
+  It can be used any 32bit development suites that can issue OS/2 APIs such as emx/gcc, VisualAge C/C++ or Watcom C/C++, and REXX external function interface is also supplied.<br>
+  Free to use, under the GNU LGPL.
+  <hr>
+
+  <a name="1.1"></a>
+  <h2>1.1. Copyright and Disclaimer</h2>
+  <ol>
+   <li>'THIS SOFTWARE AND WHOLE SET OF DOCUMENTS' (CALLED 'THE PACKAGE') ARE ENTIRELY COPYRIGHTED BY TAKAYUKI 'JANUARY JUNE' SUWA/BELIEFIA PRODUCTIONS, AUTHOR/HOLDER OF THE PRODUCT.</li>
+   <li>THIS PACKAGE IS DISTRIBUTED UNDER THE &quot;GNU LESSER PUBLIC LICENSE&quot; (LGPL). IT CLAIMS:
+       <ul>
+        <li>YOU CAN USE OR INCLUDE A COMPILED VERSION OF THIS SOFTWARE (PERFDLL.DLL/RXPERFDL.DLL) WITH OTHER SOFTWARES.</LI>
+        <li>YOU CANNOT INCLUDE ANY SOURCE CODE FROM THIS SOFTWARE, WITH THE EXCEPTION OF FILES WHOSE ONLY PURPOSE IS TO DESCRIBE THE LIBRARY INTERFACE (SUCH AS PERFDLL.H).</li>
+        <li>ANY MODIFICATIONS OF THIS SOFTWARE MUST BE RELEASED UNDER THE LGPL.</li>
+        <li>YOU MUST GIVE PROMINENT NOTICE THAT YOUR PROGRAM IS:
+            <ol>
+             <li>USING THIS SOFTWARE (INCLUDING VERSION/REVISION NUMBER).</li>
+             <li>THIS SOFTWARE IS UNDER THE LGPL.</li>
+             <li>PROVIDE A COPY OF THE LGPL. (THE FILE COPYING CONTAINS THE LGPL)</li>
+             <li>PRIVIDE A COPY OF SOURCE OF THIS SOFTWARE, OR POINTER WHERE THE SOURCE CAN BE OBTAINED (SUCH AS ANONYMOUS FTP ARCHIVE URI).</li>
+            </ol></li>
+       </ul>
+       SEE &quot;COPYING&quot; FOR DETAIL.</li>
+   <li>THE PACKAGE IS PROVIDED 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.</li>
+   <li>IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY DAMAGES, WHETHER IN CONTRACT OR TORT (INCLUDED NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THE PRODUCT, EVEN THOUGH SUCH HOLDER HAS BEEN ADVISED OF THE POSSIBILITY OF ANY DAMAGE.</li>
+  </ol>
+  <hr>
+
+  <a name="1.2"></a>
+  <h2>1.2. System Requirements</h2>
+  This program will be functioned in environment such as:<br>
+  <ul>
+   <li>OS/2 version 3 or later (Warp v3 / WarpServer v4 / Warp v4 / WSeB / MCP / ACP, Uniprocessor or Multiprocessor)</li>
+   <li>RDTSC-capable CPUs such as Pentium, P6 family, or other compatibles</li>
+  </ul>
+  <hr>
+
+  <a name="1.3"></a>
+  <h2>1.3. Contact Author</h2>
+  Email to Takayuki 'January June' Suwa:
+  <ul>
+   <li><a href="mailto:jjsuwa@sys3175.com">mailto:jjsuwa@sys3175.com</a></li>
+  </ul>
+  <hr>
+
+  <a name="1.4"></a>
+  <h2>1.4. Revision History</h2>
+  <ul>
+   <li><strong>public release 1.0.0 (build 1)</strong> - May 25th,2001
+       <ol>
+        <li>First public release. Distributed under the LGPL.</li>
+       </ol></li>
+  </ul>
+  <hr>
+
+  <hr>
+
+  <a name="2"></a>
+  <h1>2. Reference</h1>
+  <hr>
+
+  <a name="2.1"></a>
+  <h2>2.1. PERFDLL.DLL, C/C++ API</h2>
+  <hr>
+
+  <a name="2.1.1"></a>
+  <h3>2.1.1. <tt>DosQueryPerformance()</tt></h3>
+  <table><tbody>
+   <tr>
+    <td valign="top"><strong>Syntax</strong></td>
+    <td>Queries performance information.
+        <table border="1"><tbody><tr><td>
+<pre>#define INCL_BASE
+#include &lt;os2.h&gt;
+#include &quot;PERFDLL.h&quot;
+&nbsp;
+APIRET ulrc = DosQueryPerformance(PPERFORMANCE pxPerfInfo);</pre>
+        </td></tr></tbody></table></td>
+   </tr>
+   <tr>
+    <td valign="top"><strong>Parameters</strong></td>
+    <td><dl>
+         <dt><tt>pxPerfInfo</tt> <tt>(PPERFORMANCE)</tt> - output</dt>
+          <dd>Pointer to structure that performance information will be set to.</dd>
+        </dl></td>
+   </tr>
+   <tr>
+    <td valign="top"><strong>Returns</strong></td>
+    <td><dl>
+         <dt><tt>ulrc</tt> <tt>(APIRET)</tt> - return</dt>
+          <dd>Return codes.
+              <dl>
+               <dt><tt>ERROR_INVALID_FUNCTION</tt></dt>
+                <dd>Error. (either <tt>DosPerfSysCall()</tt> API or <tt>RDTSC</tt> instruction are not capable, nor both)</dd>
+               <dt><tt>NO_ERROR</tt></dt>
+                <dd>Successful completion.</dd>
+              </dl></dd>
+        </dl></td>
+   </tr>
+   <tr>
+    <td valign="top"><strong>Remarks</strong></td>
+    <td><p>This function queries performance information. Queried information will be stored into <tt>*pxPerfInfo</tt>.<br>
+           Structure <tt>PERFORMANCE</tt> is defined as follows:
+           <table border="1"><tbody><tr><td>
+<pre>/* performance information structure */
+typedef struct _PERFORMANCE
+{
+    ULONG ulNumCPUs;             /* # of available CPUs */
+    struct
+    {
+        FIXED fxIdleRatio;       /* idle ratio in FIXED percentage (65536 means 1.0) */
+        FIXED fxBusyRatio;       /* busy ratio in FIXED percentage (65536 means 1.0) */
+        FIXED fxInterruptRatio;  /* interrupt ratio in FIXED percentage (65536 means 1.0) */
+    } Overall, ByCPU[64];        /* performance informations, by overall, and by each CPUs */
+} PERFORMANCE, * PPERFORMANCE;</pre>
+           </td></tr></tbody></table>
+           Fixed-pointed <tt>FIXED</tt> seems too coarse, but enough to hold &quot;nn.nnnn%&quot; format :)</p></td>
+   </tr>
+  </tbody></table>
+  <hr>
+
+  <a name="2.2"></a>
+  <h2>2.2. RXPERFDL.DLL, REXX External Function Interface</h2>
+  <hr>
+
+  <a name="2.2.1"></a>
+  <h3>2.2.1. <tt>RxQpLoadFuncs</tt></h3>
+  <table><tbody>
+   <tr>
+    <td valign="top"><strong>Syntax</strong></td>
+    <td>Loads all RXPERFDL.DLL functions.
+        <table border="1"><tbody><tr><td>
+<pre>call RxFuncAdd 'RxQpLoadFuncs', 'RXPERFDL', 'RxQpLoadFuncs'
+call RxQpLoadFuncs</pre>
+        </td></tr></tbody></table></td>
+   </tr>
+   <tr>
+    <td valign="top"><strong>Parameters</strong></td>
+    <td>None.</td>
+   </tr>
+   <tr>
+    <td valign="top"><strong>Returns</strong></td>
+    <td>None.</td>
+   </tr>
+   <tr>
+    <td valign="top"><strong>Remarks</strong></td>
+    <td><p>This function loads all RXPERFDL.DLL functions, as same as RexxUtil <tt>SysLoadFuncs</tt>.</p></td>
+   </tr>
+  </tbody></table>
+  <hr>
+
+  <a name="2.2.2"></a>
+  <h3>2.2.2. <tt>RxQpDropFuncs</tt></h3>
+  <table><tbody>
+   <tr>
+    <td valign="top"><strong>Syntax</strong></td>
+    <td>Drops all RXPERFDL.DLL functions.
+        <table border="1"><tbody><tr><td>
+<pre>call RxQpDropFuncs</pre>
+        </td></tr></tbody></table></td>
+   </tr>
+   <tr>
+    <td valign="top"><strong>Parameters</strong></td>
+    <td>None.</td>
+   </tr>
+   <tr>
+    <td valign="top"><strong>Returns</strong></td>
+    <td>None.</td>
+   </tr>
+   <tr>
+    <td valign="top"><strong>Remarks</strong></td>
+    <td><p>This function drops all RXPERFDL.DLL functions, as same as RexxUtil <tt>SysDropFuncs</tt>.</p></td>
+   </tr>
+  </tbody></table>
+  <hr>
+
+  <a name="2.2.3"></a>
+  <h3>2.2.3. <tt>RxQueryPerformance</tt></h3>
+  <table><tbody>
+   <tr>
+    <td valign="top"><strong>Syntax</strong></td>
+    <td>Queries performance information.
+        <table border="1"><tbody><tr><td>
+<pre>rc = RxQueryPerformance(stem)</pre>
+        </td></tr></tbody></table></td>
+   </tr>
+   <tr>
+    <td valign="top"><strong>Parameters</strong></td>
+    <td><dl>
+         <dt><tt>stem</tt></dt>
+          <dd>name of stem variable that performance information will be set to.</dd>
+        </dl></td>
+   </tr>
+   <tr>
+    <td valign="top"><strong>Returns</strong></td>
+    <td><dl>
+         <dt><tt>rc</tt></dt>
+          <dd>Return codes.
+              <dl>
+               <dt><tt>1</tt></dt>
+                <dd>Error. (either <tt>DosPerfSysCall()</tt> API or <tt>RDTSC</tt> instruction are not capable, nor both)</dd>
+               <dt><tt>0</tt></dt>
+                <dd>Successful completion.</dd>
+              </dl></dd>
+        </dl></td>
+   </tr>
+   <tr>
+    <td valign="top"><strong>Remarks</strong></td>
+    <td><p>This function queries performance information using PERFDLL.DLL <tt>DosQueryPerformance()</tt>. Queried information will be stored into stem variable <tt>stem</tt>.
+           <dl>
+            <dt><tt>stem.ulNumCPUs</tt></dt>
+             <dd># of available CPUs.</dd>
+            <dt><tt>stem.Overall.fxIdleRatio</tt></dt>
+             <dd>Overall performance information, idle ratio in FIXED percentage (65536 means 1.0).</dd>
+            <dt><tt>stem.Overall.fxBusyRatio</tt></dt>
+             <dd>Overall performance information, busy ratio in FIXED percentage.</dd>
+            <dt><tt>stem.Overall.fxInterruptRatio</tt></dt>
+             <dd>Overall performance information, interrupt ratio in FIXED percentage.</dd>
+            <dt><tt>stem.ByCPU.<u>n</u>.fxIdleRatio</tt> (<u>n</u> : CPU index, 0 - <tt>stem.ulNumCPUs</tt>-1)</dt>
+             <dd>Individual CPU performance information, idle ratio in FIXED percentage.</dd>
+            <dt><tt>stem.ByCPU.<u>n</u>.fxBusyRatio</tt></dt>
+             <dd>Individual CPU performance information, busy ratio in FIXED percentage.</dd>
+            <dt><tt>stem.ByCPU.<u>n</u>.fxInterruptRatio</tt></dt>
+             <dd>Individual CPU performance information, interrupt ratio in FIXED percentage.</dd>
+           </dl></p></td>
+   </tr>
+  </tbody></table>
+  <hr>
+
+  <hr>
+
+  Copyright 2001 January June / Yotogi-Hime / Beliefia Productions. All rights reserved.<br>
+  Beliefia Productions and its logo design are trademarks of Beliefia Productions. All rights reserved.<br>
+  Other copyrighted works(images, musics, programs, and so on), trademarks and servicemarks in this document are owned by their respective owners.<br>
+  <br>
+  [This document is HTML3.2(Wilbur)-compliant.]
+
+ </body>
+
+</html>
