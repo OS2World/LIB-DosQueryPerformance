@@ -6,7 +6,7 @@ This software is a dynalink library that queries performance activity ratios (bu
 
 LICENSE
 ===============
-* GNU GPL V2
+* GNU LGPL V2
 
 COMPILE TOOLS
 ===============
